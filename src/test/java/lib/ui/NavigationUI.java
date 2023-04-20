@@ -21,10 +21,22 @@ abstract public class NavigationUI extends MainPageObject{
 
     public void clickMyLists()
     {
-        this.waitForElementAndClick(
-                MY_LISTS_LINK,
-                "Cannot find My lists",
-                5);
+        if (Platform.getInstance().isMW()){
+            this.waitForElementPresent(
+                    MY_LISTS_LINK,
+                    "Cannot see Watchlist",
+                    10
+            );
+            this.tryClickElementWithSeveralAttempts(
+                    MY_LISTS_LINK,
+                    "Cannot find and click open navigation",
+                    10
+            );
+        }
+//        this.waitForElementAndClick(
+//                MY_LISTS_LINK,
+//                "Cannot find My lists",
+//                5);
     }
     public void clickSavedAndClose()
     {
@@ -41,6 +53,13 @@ abstract public class NavigationUI extends MainPageObject{
     public void openNavigation() {
         if(Platform.getInstance().isMW()) {
             this.waitForElementAndClick(OPEN_NAVIGATION, "Cannot find and click open navigation", 5);
+        } else {
+            System.out.println("Method openNavigation does nothing for platform " + Platform.getInstance().getPlatformVar());
+        }
+    }
+    public void clickStarInMyLists(){
+        if(Platform.getInstance().isMW()) {
+            this.waitForElementAndClick(MY_LISTS_LINK, "Cannot find and click open navigation", 5);
         } else {
             System.out.println("Method openNavigation does nothing for platform " + Platform.getInstance().getPlatformVar());
         }

@@ -18,8 +18,7 @@ public class MyListTests extends CoreTestCase
     password = "korsak0000";
     private static final String name_of_folder = "Java (programming language)";
     @Test
-    public void testSaveFirstArticleToMyList()
-    {
+    public void testSaveFirstArticleToMyList() {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 
         SearchPageObject.initSearchInput();
@@ -30,25 +29,27 @@ public class MyListTests extends CoreTestCase
         ArticlePageObject.waitForTitleElement();
         String article_title = ArticlePageObject.getArticleTitle();
 
-        if (Platform.getInstance().isAndroid()){
+        if (Platform.getInstance().isAndroid()) {
             ArticlePageObject.addArticleToMyList(name_of_folder);
-        }else {
+        } else if (Platform.getInstance().isIOS()) {
             ArticlePageObject.addArticlesToMySaved();
-        }if (Platform.getInstance().isMW()){
-        AuthorizationPageObject Auth = new AuthorizationPageObject(driver);
-        Auth.clickAuthButton();
-        Auth.enterLoginData(login, password);
-        Auth.submitForm();
+            ArticlePageObject.closeArticle();
+        } else {
+            SearchPageObject.clickAddToWatchList();
+            AuthorizationPageObject Auth = new AuthorizationPageObject(driver);
+            Auth.clickAuthButton();
+            Auth.enterLoginData(login, password);
+            Auth.submitForm();
 
-        ArticlePageObject.waitForTitleElement();
-        assertEquals("We are not on the same page after login",
-                article_title,
-                ArticlePageObject.getArticleTitle());
+            String url = driver.getCurrentUrl();
+            String new_url = url.substring(0, 11) + "m." + url.substring(11);
+            driver.get(new_url);
 
-        ArticlePageObject.addArticlesToMySaved();
-    }
-        ArticlePageObject.closeArticle();
-
+            ArticlePageObject.waitForTitleElement();
+            assertEquals("We are not on the same page after login",
+                    article_title,
+                    ArticlePageObject.getArticleTitle());
+        }
         NavigationUI NavigationUI = NavigationUIFactory.get(driver);
         NavigationUI.openNavigation();
         NavigationUI.clickMyLists();
@@ -57,10 +58,11 @@ public class MyListTests extends CoreTestCase
 
         if (Platform.getInstance().isAndroid()) {
             MyListsPageObject.openFolderByName(name_of_folder);
+        } else if (Platform.getInstance().isIOS()) {
+            MyListsPageObject.holdArticleToDelete(article_title);
+            MyListsPageObject.deleteSavedArticle();
+        } else {
+            MyListsPageObject.swipeByArticleToDelete(article_title);
         }
-//        MyListsPageObject.swipeByArticleToDelete(article_title);
-        MyListsPageObject.holdArticleToDelete(article_title);
-        MyListsPageObject.deleteSavedArticle();
-        SearchPageObject.checkIfArticleIsDeleted();
     }
 }

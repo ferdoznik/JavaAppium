@@ -12,6 +12,7 @@ abstract public class SearchPageObject extends MainPageObject
     SEARCH_CANCEL_BUTTON,
     SEARCH_RESULT_ELEMENT,
     SEARCH_MY_SAVED_ARTICLE,
+    OPTIONS_ADD_TO_MY_LIST_BUTTON,
     SEARCH_EMPTY_RESULT_ELEMENT;
     public SearchPageObject(RemoteWebDriver driver)
     {
@@ -85,6 +86,13 @@ abstract public class SearchPageObject extends MainPageObject
         this.assertElementNotPresent(
                 SEARCH_MY_SAVED_ARTICLE,
                 "Article is still there"
+        );
+    }
+    public void clickAddToWatchList(){
+        this.waitForElementAndClick(
+                OPTIONS_ADD_TO_MY_LIST_BUTTON,
+                "Cannot add article to my lists",
+                3
         );
     }
 }

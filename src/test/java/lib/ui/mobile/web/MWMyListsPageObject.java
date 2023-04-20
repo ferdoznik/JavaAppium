@@ -6,10 +6,9 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 public class MWMyListsPageObject extends MyListsPageObject
 {
     static {
-//        ARTICLE_BY_TITLE_TPL = "xpath://XCUIElementTypeStaticText[contains(@name,'{TITLE}')]";
-        ARTICLE_BY_TITLE_TPL = "id:Fighting video game series";
-        MY_SAVED_ARTICLE = "id:Java (programming language)";
-        REMOVE_ARTICLE_FROM_SAVED = "id:Remove from saved";
+        ARTICLE_BY_TITLE_TPL = "xpath://ul[contains(@class, 'watchlist')]//h3[contains(text(),'{TITLE}')]";
+        REMOVE_FROM_SAVED_BUTTON = "xpath://ul[contains(@class, 'watchlist')]//h3[contains(text(),'{TITLE}')]/../../a[contains(@class, 'watched')]";
+        FOLDER_BY_NAME_TPL = "xpath://ul[contains(@class, 'watchlist')]//h3[contains(text(),'{TITLE}')]";
     }
     public MWMyListsPageObject(RemoteWebDriver driver)
     {

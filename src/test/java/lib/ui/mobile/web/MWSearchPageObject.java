@@ -12,6 +12,7 @@ public class MWSearchPageObject extends SearchPageObject {
         SEARCH_RESULT_ELEMENT = "css:ul.page-list>li.page-summary";
         SEARCH_EMPTY_RESULT_ELEMENT = "css:p.without-results";
         SEARCH_MY_SAVED_ARTICLE = "id:Video game series and multimedia franchise";
+        OPTIONS_ADD_TO_MY_LIST_BUTTON = "xpath://*[text()='Watch']";
     }
     public MWSearchPageObject(RemoteWebDriver driver)
     {
