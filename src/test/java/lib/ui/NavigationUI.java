@@ -1,12 +1,13 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import io.qameta.allure.Step;
 import lib.Platform;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-abstract public class NavigationUI extends MainPageObject{
-
+abstract public class NavigationUI extends MainPageObject
+{
     protected static String
             MY_LISTS_LINK,
             CLOSE_BUTTON,
@@ -19,6 +20,7 @@ abstract public class NavigationUI extends MainPageObject{
         super(driver);
     }
 
+    @Step("Opening the page with saved articles/reading lists")
     public void clickMyLists()
     {
         if (Platform.getInstance().isMW()){
@@ -38,6 +40,8 @@ abstract public class NavigationUI extends MainPageObject{
 //                "Cannot find My lists",
 //                5);
     }
+
+    @Step("Clicking save and closing Mu lists")
     public void clickSavedAndClose()
     {
         this.waitForElementAndClick(
@@ -50,6 +54,8 @@ abstract public class NavigationUI extends MainPageObject{
                 "Cannot find and press X button",
                 2);
     }
+
+    @Step("Opening the article main menu")
     public void openNavigation() {
         if(Platform.getInstance().isMW()) {
             this.waitForElementAndClick(OPEN_NAVIGATION, "Cannot find and click open navigation", 5);
@@ -57,6 +63,8 @@ abstract public class NavigationUI extends MainPageObject{
             System.out.println("Method openNavigation does nothing for platform " + Platform.getInstance().getPlatformVar());
         }
     }
+
+    @Step("Adding to Favourites by clicking the Star")
     public void clickStarInMyLists(){
         if(Platform.getInstance().isMW()) {
             this.waitForElementAndClick(MY_LISTS_LINK, "Cannot find and click open navigation", 5);

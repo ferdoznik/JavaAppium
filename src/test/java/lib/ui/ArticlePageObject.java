@@ -1,6 +1,7 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import io.qameta.allure.Step;
 import org.openqa.selenium.WebElement;
 import lib.Platform;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -27,13 +28,18 @@ abstract public class ArticlePageObject extends MainPageObject
     {
         super(driver);
     }
+
+    @Step("Waiting for title on the article page")
     public WebElement waitForTitleElement()
     {
         return this.waitForElementPresent(TITLE, "Cannot find article title on page", 3);
     }
+
+    @Step("Get article title")
     public String getArticleTitle()
     {
         WebElement title_element = waitForTitleElement();
+        screenshot(this.takeScreenshot("article_title"));
         if (Platform.getInstance().isAndroid()){
         return title_element.getAttribute("text");
         }else if (Platform.getInstance().isIOS()) {
@@ -42,6 +48,8 @@ abstract public class ArticlePageObject extends MainPageObject
             return title_element.getText();
         }
     }
+
+    @Step("Swiping to footer on article page")
     public void swipeToFooter()
     {
         if (Platform.getInstance().isAndroid()) {
@@ -62,6 +70,8 @@ abstract public class ArticlePageObject extends MainPageObject
             );
         }
     }
+
+    @Step("Adding the article to my list")
     public void addArticleToMyList(String name_of_folder)
     {
         this.waitForElementAndClick(
@@ -102,6 +112,7 @@ abstract public class ArticlePageObject extends MainPageObject
         );
 
     }
+    @Step("Closing the article")
     public void closeArticle()
     {
         if ((Platform.getInstance().isIOS()) || (Platform.getInstance().isAndroid())){
@@ -114,6 +125,8 @@ abstract public class ArticlePageObject extends MainPageObject
             System.out.println("Method closeArticle do nothing for platform" + Platform.getInstance().getPlatformVar());
         }
     }
+
+    @Step("Adding the article to the existing list")
     public void addAnotherArticleToMyList()
     {
         this.waitForElementAndClick(
@@ -127,10 +140,13 @@ abstract public class ArticlePageObject extends MainPageObject
                 5
         );
     }
+    @Step("Waiting for Pop-up to disappear")
     public void waitForPopoverToDisappear()
     {
         this.waitForElementNotPresent(POPOVER, "POPOVER still present", 5);
     }
+
+    @Step("Adding the article to the existing list")
     public void addArticlesToMySaved()
     {
         if (Platform.getInstance().isMW()){
@@ -157,6 +173,8 @@ abstract public class ArticlePageObject extends MainPageObject
                 "Cannot find and press X button",
                 2);
     }
+
+    @Step("Adding the article and clear input")
     public void addToMySavedAndClearInput(String name_of_folder)
     {
         this.waitForElementAndClick(
@@ -172,6 +190,8 @@ abstract public class ArticlePageObject extends MainPageObject
                 "Cannot find Clear button",
                 2);
     }
+
+    @Step("Adding the article and click Cancel")
     public void addToMySavedAndCancel(String name_of_folder)
     {
         this.waitForElementAndClick(
@@ -184,10 +204,11 @@ abstract public class ArticlePageObject extends MainPageObject
                 2);
         this.waitForElementAndClick(
                 CANCEL_BUTTON,
-                "Cannot find Clear button",
+                "Cannot find cancel button",
                 2);
     }
 
+    @Step("Removing the article from saved if it had been added")
     public void removeArticleFromSavedIfItAdded(){
         if (this.isElementPresent(OPTIONS_REMOVE_FROM_MY_LISTS_BUTTON)){
             this.waitForElementAndClick(

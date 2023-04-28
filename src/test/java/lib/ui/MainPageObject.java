@@ -4,6 +4,8 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
+import io.qameta.allure.Attachment;
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -11,13 +13,17 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import lib.Platform;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class MainPageObject {
-
+public class MainPageObject
+{
     protected RemoteWebDriver driver;
 
     public MainPageObject(RemoteWebDriver driver) {
@@ -57,6 +63,36 @@ public class MainPageObject {
         return wait.until(
                 ExpectedConditions.invisibilityOfElementLocated(by)
         );
+    }
+
+    public void assertElementHasText(String locator, String expected, String errorMessage) {
+        By by = this.getLocatorByString(locator);
+        WebElement element = driver.findElement(by);
+        String actual = Platform.getInstance().isAndroid()
+                ? element.getAttribute("text")
+                : element.getAttribute("value");
+        Assert.assertEquals(String.format("\n  Error %s\n", errorMessage), expected, actual);
+    }
+
+    public void assertElementHasPlaceholder(String locator, String expected, String errorMessage) {
+        By by = this.getLocatorByString(locator);
+        WebElement element = driver.findElement(by);
+        String actual = element.getAttribute("placeholder");
+        Assert.assertEquals(String.format("\n  Error %s\n", errorMessage), expected, actual);
+    }
+
+    public WebElement waitForElementVisible(String locator, String errorMessage, long timeoutInSeconds) {
+        By by = this.getLocatorByString(locator);
+        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        wait.withMessage(String.format("\n  Error %s\n", errorMessage));
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+    }
+
+    public WebElement waitForElementVisible(String locator, String errorMessage) {
+        By by = this.getLocatorByString(locator);
+        WebDriverWait wait = new WebDriverWait(driver, 15);
+        wait.withMessage(String.format("\n  Error %s\n", errorMessage));
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
     public WebElement waitForElementAndClear(String locator, String error_message, long timeoutInSeconds) {
@@ -101,7 +137,7 @@ public class MainPageObject {
         while (driver.findElements(by).size() == 0) {
 
             if (already_swiped > max_swipes) {
-                waitForElementPresent(locator, "Cannot find element by swiping up. \n" + error_message, 0);
+                waitForElementPresent(locator, "Cannot find element by swiping up. \n" + error_message, 2);
                 return;
             }
             swipeUpQuick();
@@ -139,6 +175,33 @@ public class MainPageObject {
             System.out.println("Method swipeElementToLeft does nothing for platform" + Platform.getInstance().getPlatformVar());}
     }
 
+    public List<WebElement> waitForNumberOfElementsToBeMoreThan(String locator, int number, String errorMessage, long timeoutInSeconds) {
+        By by = this.getLocatorByString(locator);
+        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        wait.withMessage(String.format("\n  Error %s\n", errorMessage));
+        return wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(by, number));
+    }
+
+    public List<WebElement> waitForPresenceOfAllElements(String locator, String errorMessage, long timeoutInSeconds) {
+        By by = this.getLocatorByString(locator);
+        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        wait.withMessage(String.format("\n  Error %s\n", errorMessage));
+        return wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
+    }
+
+    public WebElement waitForElementClickable(String locator, String errorMessage, long timeoutInSeconds) {
+        By by = this.getLocatorByString(locator);
+        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        wait.withMessage(String.format("\n  Внимание! %s\n", errorMessage));
+        return wait.until(ExpectedConditions.elementToBeClickable(by));
+    }
+
+    public WebElement waitForElementClickableAndClick(String locator, String errorMessage, long timeoutInSeconds) {
+        WebElement element = waitForElementClickable(locator, errorMessage, timeoutInSeconds);
+        element.click();
+        return element;
+    }
+
     public int getAmountOfElements(String locator) {
         By by = this.getLocatorByString(locator);
         List elements = driver.findElements(by);
@@ -166,7 +229,7 @@ public class MainPageObject {
         }
     }
 
-    private By getLocatorByString(String locator_with_type) {
+    public By getLocatorByString(String locator_with_type) {
         String[] exploded_locator = locator_with_type.split(Pattern.quote(":"), 2);
         String by_type = exploded_locator[0];
         String locator = exploded_locator[1];
@@ -284,5 +347,28 @@ public class MainPageObject {
             }
             ++current_attempts;
         }
+    }
+    public String takeScreenshot(String name) {
+        TakesScreenshot ts = this.driver;
+        File source = ts.getScreenshotAs(OutputType.FILE);
+        String path = System.getProperty("user.dir") + "\\target\\" + name + "_screenshot.png";
+        try {
+            FileUtils.copyFile(source, new File(path));
+            System.out.printf("The screenshot was taken: %s%n", path);
+        } catch (Exception e) {
+            System.out.printf("Cannot make a screenshot due to error: %s%n", e.getMessage());
+        }
+        return path;
+    }
+
+    @Attachment
+    public static byte[] screenshot(String path) {
+        byte[] bytes = new byte[0];
+        try {
+            bytes = Files.readAllBytes(Paths.get(path));
+        } catch (IOException e) {
+            System.out.printf("Cannot get bytes from screenshot. Error: %s%n", e.getMessage());
+        }
+        return bytes;
     }
 }

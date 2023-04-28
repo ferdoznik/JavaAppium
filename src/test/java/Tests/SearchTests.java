@@ -1,13 +1,21 @@
 package Tests;
 
+import io.qameta.allure.*;
+import io.qameta.allure.junit4.DisplayName;
 import lib.CoreTestCase;
 import lib.ui.SearchPageObject;
 import lib.ui.factories.SearchPageObjectFactory;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class SearchTests extends CoreTestCase
 {
     @Test
+    @Feature(value = "Search")
+    @DisplayName("Simple search for the article")
+    @Description("Search for the article and check its presence in search results by substring")
+    @Step("Starting test 'testSearch'")
+    @Severity(value = SeverityLevel.BLOCKER)
     public void testSearch()
     {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
@@ -17,6 +25,11 @@ public class SearchTests extends CoreTestCase
         SearchPageObject.waitForSearchResult("bject-oriented programming language");
     }
     @Test
+    @Feature(value = "Search")
+    @DisplayName("Cancel search for the article")
+    @Description("Search for the article and then cancel the search")
+    @Step("Starting test 'testCancelSearch'")
+    @Severity(value = SeverityLevel.MINOR)
     public void testCancelSearch()
     {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
@@ -54,6 +67,11 @@ public class SearchTests extends CoreTestCase
 //        );
 
     @Test
+    @Feature(value = "Search")
+    @DisplayName("Search for not empty results")
+    @Description("Search for the article and then check that search results are not empty")
+    @Step("Starting test 'testAmountOfNotEmptySearch'")
+    @Severity(value = SeverityLevel.MINOR)
     public void testAmountOfNotEmptySearch() {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 
@@ -62,12 +80,17 @@ public class SearchTests extends CoreTestCase
         SearchPageObject.typeSearchLine(search_line);
         int amount_of_search_results = SearchPageObject.getAmountOfFoundArticles();
 
-        assertTrue(
+        Assert.assertTrue(
                 "We found too few results",
                 amount_of_search_results > 0
         );
     }
     @Test
+    @Feature(value = "Search")
+    @DisplayName("Search for empty results")
+    @Description("Search for the article and then check that search results are empty")
+    @Step("Starting test 'testAmountOfEmptySearch'")
+    @Severity(value = SeverityLevel.MINOR)
     public void testAmountOfEmptySearch()
     {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
@@ -79,6 +102,11 @@ public class SearchTests extends CoreTestCase
         SearchPageObject.assertThereIsNoResultsOfSearch();
     }
     @Test
+    @Feature(value = "Search")
+    @DisplayName("Search for request and check if results more than one")
+    @Description("Search for the article and then check that search results are plural")
+    @Step("Starting test 'testAmountOfEmptySearch'")
+    @Severity(value = SeverityLevel.MINOR)
     public void testAssertNumberOfArticles()
     {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
@@ -88,7 +116,7 @@ public class SearchTests extends CoreTestCase
         SearchPageObject.typeSearchLine(search_line);
         int amount_of_search_results = SearchPageObject.getAmountOfFoundArticles();
 
-        assertTrue(
+        Assert.assertTrue(
                 "We found too few results",
                 amount_of_search_results > 1
         );
